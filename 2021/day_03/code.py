@@ -22,6 +22,14 @@ def part1(lines):
     return ans
 
 
+def part2(lines):
+    width = len(lines[0])
+    a = [list(map(int, line)) for line in lines]
+    array = np.array(a)
+
+    return ans
+
+
 def main():
     sample_lines = read_input("sample_input.txt")
     lines = read_input("input.txt")
@@ -30,6 +38,9 @@ def main():
 
     part1ans = part1(lines)
     print("part1:", part1ans)
+
+    part2ans = part2(lines)
+    print("part2:", part2ans)
 
 
 if __name__ == "__main__":
