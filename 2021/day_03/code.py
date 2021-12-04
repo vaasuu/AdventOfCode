@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 
 def read_input(filename):
@@ -22,12 +23,31 @@ def part1(lines):
     return ans
 
 
+def column(matrix, i):
+    return [row[i] for row in matrix]
+
+
+def average(lst):
+    return sum(lst) / len(lst)
+
+
+def which_to_keep(avg, return_val_if_equal):
+    if avg < 0.5:
+        most_common = 0
+    elif avg > 0.5:
+        most_common = 1
+    else:
+        return return_val_if_equal
+    return most_common
+
+
 def part2(lines):
     width = len(lines[0])
     a = [list(map(int, line)) for line in lines]
-    array = np.array(a)
 
-    return ans
+    columns = [column(a, col) for col in range(width)]
+    column_averages = [average(col) for col in columns]
+    keep_bits = [which_to_keep(col, 1) for col in column_averages]
 
 
 def main():
@@ -38,6 +58,8 @@ def main():
 
     part1ans = part1(lines)
     print("part1:", part1ans)
+
+    assert part2(sample_lines) == 230
 
     part2ans = part2(lines)
     print("part2:", part2ans)
