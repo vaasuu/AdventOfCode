@@ -4,13 +4,17 @@ def read_input(filename):
     return input
 
 
+def rotated(array_2d):
+    list_of_tuples = zip(*array_2d[::-1])
+    return [list(elem) for elem in list_of_tuples]
+
+
 def check_board_for_win(board, board_size=5):
     win_row = ["X" for a in range(board_size)]
-    rotated_board = list(zip(*board[::-1]))
-    for board in [board, rotated_board]:
-        for row in board:
-            if row == win_row:
-                return True
+    rotated_board = rotated(board)
+    for bingo_board in [board, rotated_board]:
+        if win_row in bingo_board:
+            return True
     return False
 
 
@@ -32,13 +36,14 @@ def part1(input):
 
     board_size = len(bingo_boards[0])
 
-    for drawn_num in numbers_to_draw:
-        for board in bingo_boards:
+    for times_drawn, drawn_num in enumerate(numbers_to_draw):
+        for board_number, board in enumerate(bingo_boards):
             for i in range(board_size):
                 for j in range(board_size):
                     if board[i][j] == drawn_num:
                         board[i][j] = "X"
             if check_board_for_win(board, board_size):
+                print(f"BINGO on board number {board_number} with number {drawn_num} drawn. times_drawn={times_drawn}")
                 board_sum = calc_board_sum(board)
                 ans = board_sum * drawn_num
                 return ans
