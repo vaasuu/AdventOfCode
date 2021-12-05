@@ -49,6 +49,37 @@ def part1(input):
                 return ans
 
 
+def part2(input):
+    board_indexes_that_won = []
+    drawn_numbers_that_won = []
+
+    numbers_to_draw = [int(x) for x in input[0].split(",")]
+    bingo_boards = [
+        [[int(num_str) for num_str in row.split()] for row in board_str.split("\n")]
+        for board_str in input[1:]
+    ]
+
+    board_size = len(bingo_boards[0])
+
+    for times_drawn, drawn_num in enumerate(numbers_to_draw):
+        for board_number, board in enumerate(bingo_boards):
+            if board_number not in board_indexes_that_won:
+                for i in range(board_size):
+                    for j in range(board_size):
+                        if board[i][j] == drawn_num:
+                            board[i][j] = "X"
+                if check_board_for_win(board, board_size):
+                    print(f"BINGO on board number {board_number} with number {drawn_num} drawn. times_drawn={times_drawn}")
+                    board_indexes_that_won.append(board_number)
+                    drawn_numbers_that_won.append(drawn_num)
+
+    last_drawn_number = drawn_numbers_that_won[-1]
+    last_board = bingo_boards[board_indexes_that_won[-1]]
+    board_sum = calc_board_sum(last_board)
+    ans = board_sum * last_drawn_number
+    return ans
+
+
 def main():
     sample_input = read_input("sample_input.txt")
     input = read_input("input.txt")
@@ -58,10 +89,10 @@ def main():
     part1ans = part1(input)
     print("part1:", part1ans)
 
-    # assert part2(sample_input) ==
+    assert part2(sample_input) == 1924
 
-    # part2ans = part2(input)
-    # print("part2:", part2ans)
+    part2ans = part2(input)
+    print("part2:", part2ans)
 
 
 if __name__ == "__main__":
