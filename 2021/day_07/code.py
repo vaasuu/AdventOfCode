@@ -10,10 +10,28 @@ def calculate_distances_to_value(target_val, list_of_values):
 
 
 def part1(input):
-    #most_common_val = max(set(input), key=input.count)
-    #distances = calculate_distances_to_value(most_common_val, input)
+    # most_common_val = max(set(input), key=input.count)
+    # distances = calculate_distances_to_value(most_common_val, input)
 
     fuelcosts = [sum(calculate_distances_to_value(i, input)) for i in range(1000)]
+
+    ans = min(fuelcosts)
+    return ans
+
+
+def nth_triagular_number(list_of_n):
+    numbers = [int(n * (n + 1) / 2) for n in list_of_n]
+    return numbers
+
+
+def part2(input):
+    # most_common_val = max(set(input), key=input.count)
+    # distances = calculate_distances_to_value(most_common_val, input)
+
+    fuelcosts = [
+        sum(nth_triagular_number(calculate_distances_to_value(i, input)))
+        for i in range(1000)
+    ]
 
     ans = min(fuelcosts)
     return ans
@@ -28,10 +46,10 @@ def main():
     part1ans = part1(input)
     print("part1:", part1ans)
 
-    # assert part2(sample_input) == 12
+    assert part2(sample_input) == 168
 
-    # part2ans = part2(input)
-    # print("part2:", part2ans)
+    part2ans = part2(input)
+    print("part2:", part2ans)
 
 
 if __name__ == "__main__":
