@@ -16,10 +16,7 @@ def part1(timers, days):
             timers[index] -= 1
             if (timers[index] < 0):
                 timers[index] = 6
-                timers.append(8) # The new lanternfish starts with an 
-                                     # internal timer of 8 and does not 
-                                     # start counting down until the next day
-                                     # 8+1 = 9
+                timers.append(8) 
         DEBUG and print(f"After \t{i+1}\t days: {list_to_str(timers)}")
     total_fish = len(timers)
     print(f"After {days} days, there are {total_fish} fish")
