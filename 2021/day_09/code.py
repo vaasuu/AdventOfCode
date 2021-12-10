@@ -7,11 +7,46 @@ def read_input(filename):
     return lines
 
 
+def get_adjacent_location_indices(i, j, matrix, hight, width):
+    adjacent_indices = []
+    if i > 0:
+        adjacent_indices.append((i-1,j))
+    if i+1 < hight:
+        adjacent_indices.append((i+1,j))
+    if j > 0:
+        adjacent_indices.append((i,j-1))
+    if j+1 < width:
+        adjacent_indices.append((i,j+1))
+    return adjacent_indices
+
+
+def get_values_for_indices(indices, matrix):
+    values = [matrix[i][j] for i, j in indices]
+    return values
+
+
+def get_low_points(matrix):
+    low_points = []
+
+    width = len(matrix[0])
+    hight = len(matrix)
+    for i in range(hight):
+        for j in range(width):
+            adjacent_indices = get_adjacent_location_indices(i, j, matrix, hight, width)
+            adjacent_values = get_values_for_indices(adjacent_indices, matrix)
+            current_cell_val = matrix[i][j]
+            if(current_cell_val < min(adjacent_values)):
+                low_points.append((i, j))
+    return low_points
+
+
 def part1(lines):
-    width = len(lines[0])
-    a = [list(map(int, line)) for line in lines]
-    array = np.array(a)
-    pass
+    matrix = [list(map(int, line)) for line in lines]
+    low_points = get_low_points(matrix)
+    low_point_values = [matrix[i][j] for i, j in low_points]
+    ans = sum([val+1 for val in low_point_values])
+    return ans
+
 
 def part2(lines):
     a = [list(map(int, line)) for line in lines]
