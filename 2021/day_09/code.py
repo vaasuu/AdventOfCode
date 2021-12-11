@@ -1,13 +1,10 @@
-import numpy as np
-
-
 def read_input(filename):
     with open(filename) as file:
         lines = [line.strip() for line in file.readlines()]
     return lines
 
 
-def get_adjacent_location_indices(i, j, matrix, hight, width):
+def get_adjacent_location_indices(i, j, hight, width):
     adjacent_indices = []
     if i > 0:
         adjacent_indices.append((i - 1, j))
@@ -32,7 +29,7 @@ def get_low_points(matrix):
     hight = len(matrix)
     for i in range(hight):
         for j in range(width):
-            adjacent_indices = get_adjacent_location_indices(i, j, matrix, hight, width)
+            adjacent_indices = get_adjacent_location_indices(i, j, hight, width)
             adjacent_values = get_values_for_indices(adjacent_indices, matrix)
             current_cell_val = matrix[i][j]
             if current_cell_val < min(adjacent_values):
