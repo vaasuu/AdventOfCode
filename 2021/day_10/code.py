@@ -25,7 +25,11 @@ def check_line(line):
             start_char = char_stack.pop()
             if char_pairs[start_char] != char:
                 return ("corrupt", char)
-    return ("valid", None)
+    if char_stack:  # has chars
+        missing_chars = [char_pairs[char] for char in reversed(char_stack)]
+        return ("incomplete", missing_chars)
+    else:  # is empty
+        return ("valid", None)
 
 
 def part1(input):
@@ -41,6 +45,23 @@ def part1(input):
     return ans
 
 
+def part2(input):
+    score_table = {")": 1, "]": 2, "}": 3, ">": 4}
+    lines_scores = []
+
+    for line in input:
+        total_score = 0
+        state, chars = check_line(line)
+        if state == "incomplete":
+            for char in chars:
+                total_score *= 5
+                total_score += score_table[char]
+            lines_scores.append(total_score)
+
+    ans = sorted(lines_scores)[len(lines_scores) // 2]
+    return ans
+
+
 def main():
     sample_input = read_input("sample_input.txt")
     input = read_input("input.txt")
@@ -50,10 +71,10 @@ def main():
     part1ans = part1(input)
     print("part1:", part1ans)
 
-    # assert part2(sample_input) ==
+    assert part2(sample_input) == 288957
 
-    # part2ans = part2(input)
-    # print("part2:", part2ans)
+    part2ans = part2(input)
+    print("part2:", part2ans)
 
 
 if __name__ == "__main__":
