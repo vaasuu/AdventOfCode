@@ -4,82 +4,90 @@ def read_input(filename):
     return lines
 
 
-def get_adjacent_location_indices(i, j, hight, width):
+def get_adjacent_location_indices(i, j, height, width):
     adjacent_indices = []
     # ones that share boundry
     if i > 0:
-        adjacent_indices.append((i - 1, j)) # N
-    if i + 1 < hight:
-        adjacent_indices.append((i + 1, j)) # S
+        adjacent_indices.append((i - 1, j))  # N
+    if i + 1 < height:
+        adjacent_indices.append((i + 1, j))  # S
     if j > 0:
-        adjacent_indices.append((i, j - 1)) # W
+        adjacent_indices.append((i, j - 1))  # W
     if j + 1 < width:
-        adjacent_indices.append((i, j + 1)) # E
+        adjacent_indices.append((i, j + 1))  # E
     # diagonals
-    if i > 0:
-        adjacent_indices.append((i - 1, j - 1)) # NW
-    if i + 1 < hight:
-        adjacent_indices.append((i + 1, j + 1)) # SE
-    if j > 0:
-        adjacent_indices.append((i + 1, j - 1)) # SW
-    if j + 1 < width:
-        adjacent_indices.append((i - 1, j + 1)) # NE
+    if i > 0 and j > 0:
+        adjacent_indices.append((i - 1, j - 1))  # NW
+    if i < height - 1 and j < width - 1:
+        adjacent_indices.append((i + 1, j + 1))  # SE
+    if j > 0 and i + 1 < height:
+        adjacent_indices.append((i + 1, j - 1))  # SW
+    if j + 1 < width and i > 0:
+        adjacent_indices.append((i - 1, j + 1))  # NE
     return adjacent_indices
 
 
 def print_matrix(matrix):
     s = [[str(e) for e in row] for row in matrix]
     lens = [max(map(len, col)) for col in zip(*s)]
-    fmt = ' '.join('{{:{}}}'.format(x) for x in lens)
+    fmt = " ".join("{{:{}}}".format(x) for x in lens)
     table = [fmt.format(*row) for row in s]
-    print('\n'.join(table))
+    print("\n".join(table))
     print("\n")
 
 
-def step_forward(matrix, n):
+def step_forward(matrix, steps=1):
     width = len(matrix[0])
     height = len(matrix)
 
-    has_flashed = set()
-    print_matrix(matrix)
+    total_flashes = 0
 
-    def flash_adjacent(i, j, height, width):
-        adjacent_indices = set(
-            get_adjacent_location_indices(i, j, height, width)
-        )
-        for adj_i, adj_j in adjacent_indices:
-            matrix[adj_i][adj_j] += 1
-            if matrix[adj_i][adj_j] > 9 and (adj_i, adj_j) not in has_flashed:
-                has_flashed.add((adj_i, adj_j))
-                print_matrix(matrix)
-                flash_adjacent(adj_i, adj_j, height, width)
-        return 
+    for step in range(steps):
 
+        flash_count = 0
+        flashed = set()
 
-    for i in range(height):
-        for j in range(width):
-            matrix[i][j] += 1
-    print_matrix(matrix)
+        # increment all energy levels by 1
+        for i in range(height):
+            for j in range(width):
+                matrix[i][j] += 1
 
-    for i in range(height):
-        for j in range(width):
-            if matrix[i][j] > 9:
-                has_flashed.add((i, j))
-                print_matrix(matrix)
-                flash_adjacent(i, j, height, width)
+        while True:
+            prev_flash_count = flash_count
 
-    for i in range(height):
-        for j in range(width):
-            if matrix[i][j] in has_flashed:
-                matrix[i][j] = 0
-    
-    print_matrix(matrix)
-    print("end")
+            for i in range(height):
+                for j in range(width):
+                    # flash octopi that are over 9 energy and have not been flashed before in this step
+                    if matrix[i][j] > 9 and (i, j) not in flashed:
+                        # flash the octopi
+                        flashed.add((i, j))
+                        for adj_i, adj_j in get_adjacent_location_indices(
+                            i, j, height, width
+                        ):
+                            matrix[adj_i][adj_j] += 1
+                        flash_count += 1
+
+            if prev_flash_count == flash_count:
+                break
+        total_flashes += flash_count
+
+        # reset octopi that are over 9 to 0
+        for i in range(height):
+            for j in range(width):
+                if matrix[i][j] > 9:
+                    matrix[i][j] = 0
+        print(f"After step {step+1}")
+        print_matrix(matrix)
+        print(f"total_flashes: {total_flashes}")
+
+    return total_flashes
 
 
 def part1(lines):
     matrix = [list(map(int, line)) for line in lines]
-    step_forward(matrix, n=1)
+    total_flashes = step_forward(matrix, steps=100)
+    return total_flashes
+
 
 def main():
     sample_lines = read_input("sample_input.txt")
