@@ -8,22 +8,22 @@ def get_adjacent_location_indices(i, j, hight, width):
     adjacent_indices = []
     # ones that share boundry
     if i > 0:
-        adjacent_indices.append((i - 1, j))
+        adjacent_indices.append((i - 1, j)) # N
     if i + 1 < hight:
-        adjacent_indices.append((i + 1, j))
+        adjacent_indices.append((i + 1, j)) # S
     if j > 0:
-        adjacent_indices.append((i, j - 1))
+        adjacent_indices.append((i, j - 1)) # W
     if j + 1 < width:
-        adjacent_indices.append((i, j + 1))
+        adjacent_indices.append((i, j + 1)) # E
     # diagonals
     if i > 0:
-        adjacent_indices.append((i - 1, j - 1))
+        adjacent_indices.append((i - 1, j - 1)) # NW
     if i + 1 < hight:
-        adjacent_indices.append((i + 1, j + 1))
+        adjacent_indices.append((i + 1, j + 1)) # SE
     if j > 0:
-        adjacent_indices.append((i - 1, j - 1))
+        adjacent_indices.append((i + 1, j - 1)) # SW
     if j + 1 < width:
-        adjacent_indices.append((i + 1, j + 1))
+        adjacent_indices.append((i - 1, j + 1)) # NE
     return adjacent_indices
 
 
