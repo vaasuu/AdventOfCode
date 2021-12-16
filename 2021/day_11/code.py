@@ -89,6 +89,57 @@ def part1(lines):
     return total_flashes
 
 
+def part2(lines):
+    steps = 10000
+
+    matrix = [list(map(int, line)) for line in lines]
+
+    width = len(matrix[0])
+    height = len(matrix)
+
+    total_flashes = 0
+
+    for step in range(steps):
+
+        flash_count = 0
+        flashed = set()
+
+        # increment all energy levels by 1
+        for i in range(height):
+            for j in range(width):
+                matrix[i][j] += 1
+
+        while True:
+            prev_flash_count = flash_count
+
+            for i in range(height):
+                for j in range(width):
+                    # flash octopi that are over 9 energy and have not been flashed before in this step
+                    if matrix[i][j] > 9 and (i, j) not in flashed:
+                        # flash the octopi
+                        flashed.add((i, j))
+                        for adj_i, adj_j in get_adjacent_location_indices(
+                            i, j, height, width
+                        ):
+                            matrix[adj_i][adj_j] += 1
+                        flash_count += 1
+
+            if prev_flash_count == flash_count:
+                break
+        total_flashes += flash_count
+
+        # reset octopi that are over 9 to 0
+        for i in range(height):
+            for j in range(width):
+                if matrix[i][j] > 9:
+                    matrix[i][j] = 0
+        print(f"After step {step+1}")
+        print_matrix(matrix)
+        zero_matrix = [([0] * 10) for i in range(10)]
+        if matrix == zero_matrix:
+            return step + 1
+
+
 def main():
     sample_lines = read_input("sample_input.txt")
     lines = read_input("input.txt")
@@ -98,10 +149,10 @@ def main():
     part1ans = part1(lines)
     print("part1:", part1ans)
 
-    # assert part2(sample_lines) ==
+    assert part2(sample_lines) == 195
 
-    # part2ans = part2(lines)
-    # print("part2:", part2ans)
+    part2ans = part2(lines)
+    print("part2:", part2ans)
 
 
 if __name__ == "__main__":
