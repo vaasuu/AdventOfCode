@@ -1,11 +1,12 @@
 def read_input(filename):
     with open(filename) as file:
-        lines = file.read().strip()
+        lines = [line.strip() for line in file.readlines()]
     return lines
 
 
 def part1(lines):
-    pass
+    polymer_template = lines[0]
+    pair_insertion_rules = lines[2:]
 
 def main():
     sample_lines = read_input("sample_input.txt")
