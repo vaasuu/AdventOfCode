@@ -1,3 +1,6 @@
+from collections import defaultdict
+
+
 def read_input(filename):
     with open(filename) as file:
         lines = [line.strip() for line in file.readlines()]
@@ -6,6 +9,26 @@ def read_input(filename):
 
 def part1(lines):
 
+    edges = defaultdict(set)
+    for line in lines:
+        source, destination = line.split("-")
+        edges[source].add(destination)
+        edges[destination].add(source)
+
+    all_paths = set()
+    todo = [("start",)]
+    while todo:
+        path = todo.pop()
+
+        if path[-1] == "end":
+            all_paths.add(path)
+            continue
+
+        for candidate_path in edges[path[-1]]:
+            if not candidate_path.islower() or candidate_path not in path:
+                todo.append(path + (candidate_path,))
+
+    return len(all_paths)
 
 
 def main():
