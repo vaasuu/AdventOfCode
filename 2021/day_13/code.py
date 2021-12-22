@@ -1,11 +1,32 @@
+import numpy as np
+
+
 def read_input(filename):
     with open(filename) as file:
         paper = file.read().strip()
     return paper
 
 
+def parse_input(paper):
+    coordinates_str, instructions_str = paper.split("\n\n")
+    coordinates_str = [
+        tuple(coordinate.split(",")) for coordinate in coordinates_str.splitlines()
+    ]
+    coordinates = [(int(x), int(y)) for x, y in coordinates_str]
+    print(coordinates)
+
+    instructions = []
+    for instruction in instructions_str.splitlines():
+        axis, line = instruction.split("=")
+        axis = axis[-1]
+        line = int(line)
+        instructions.append((axis, line))
+
+    return coordinates, instructions
+
+
 def part1(paper):
-    pass
+    coordinates, instructions = parse_input(paper)
 
 
 def main():
