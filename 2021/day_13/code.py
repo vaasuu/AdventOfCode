@@ -53,35 +53,49 @@ def part1(paper):
 def print_np_array(matrix):
     hight, width = matrix.shape
     for i in range(hight):
+        line = ''
         for j in range(width):
             if matrix[i][j] == 1:
-                print("\u2588", end='')
+                line += "\u2588"
             else:
-                print(" ", end='')
-        print("\n",end='')
+                line += "."
+        print(line, end='\n')
     print("\n"*2)
 
 
 def part2(paper):
     coordinates, instructions = parse_input(paper)
-    width = max(x for x, y in coordinates) + 1
-    hight = max(y for x, y in coordinates) + 1
+
+    max_x = max(a[0] for a in coordinates)
+    min_x = min(a[0] for a in coordinates)
+    max_y = max(a[1] for a in coordinates)
+    min_y = min(a[1] for a in coordinates)
+    width = max_x+1
+    hight = max_y+1
+
     matrix = np.zeros((hight, width), dtype=int)
     for x, y in coordinates:
         matrix[y][x] = 1
     print_np_array(matrix)
 
+    if min_x > 0:
+        for i in range(min_x):
+            matrix = np.delete(matrix, i, 1)
+    if min_y > 0:
+        for i in range(min_y):
+            matrix = np.delete(matrix, i, 0)
+    
     for axis, line in instructions:
         hight, width = matrix.shape
         if axis == "y":
             if hight % 2 != 0:        
                 matrix = np.delete(matrix, line, 0)
-            old, new = np.split(matrix, 2, 0)
+            old, new = np.array_split(matrix, 2, 0)
             new_flipped = np.flip(new, 0)
         else:
             if width % 2 != 0:
                 matrix = np.delete(matrix, line, 1)
-            old, new = np.split(matrix, 2, 1)
+            old, new = np.array_split(matrix, 2, 1)
             new_flipped = np.flip(new, 1)
 
         matrix = np.bitwise_or(old, new_flipped)
