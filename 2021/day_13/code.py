@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def read_input(filename):
     with open(filename) as file:
         paper = file.read().strip()
@@ -12,7 +9,7 @@ def parse_input(paper):
     coordinates_str = [
         tuple(coordinate.split(",")) for coordinate in coordinates_str.splitlines()
     ]
-    coordinates = [(int(x), int(y)) for x, y in coordinates_str]
+    coordinates = set((int(x), int(y)) for x, y in coordinates_str)
 
     instructions = []
     for instruction in instructions_str.splitlines():
@@ -24,38 +21,32 @@ def parse_input(paper):
     return coordinates, instructions
 
 
-def part1(paper):
+def folding(paper, stop_on_first_fold):
     coordinates, instructions = parse_input(paper)
-    width = max(x for x, y in coordinates) + 1
-    hight = max(y for x, y in coordinates) + 1
-    matrix = np.zeros((hight, width), dtype=int)
-    for x, y in coordinates:
-        matrix[y][x] = 1
-    print_np_array(matrix)
-
+    print_grid(coordinates)
     for axis, line in instructions:
         if axis == "y":
-            matrix = np.delete(matrix, line, 0)
-            old, new = np.split(matrix, 2, 0)
-            new_flipped = np.flip(new, 0)
+            coordinates = {(x, y if y < line else 2 * line - y) for x, y in coordinates}
         else:
-            matrix = np.delete(matrix, line, 1)
-            old, new = np.split(matrix, 2, 1)
-            new_flipped = np.flip(new, 1)
+            coordinates = {(x if x < line else 2 * line - x, y) for x, y in coordinates}
 
-        matrix = np.bitwise_or(old, new_flipped)
-        print_np_array(matrix)
+        print_grid(coordinates)
 
-        ans = np.sum(matrix)
-        return ans
+        if stop_on_first_fold:
+            ans = len(coordinates)
+            return ans
+
+    return len(coordinates)
 
 
-def print_np_array(matrix):
-    hight, width = matrix.shape
-    for i in range(hight):
+def print_grid(coordinates):
+    width = max(x for x, y in coordinates)
+    hight = max(y for x, y in coordinates)
+
+    for y in range(hight + 1):
         line = ""
-        for j in range(width):
-            if matrix[i][j] == 1:
+        for x in range(width + 1):
+            if (x, y) in coordinates:
                 line += "\u2588"
             else:
                 line += "."
@@ -63,54 +54,21 @@ def print_np_array(matrix):
     print("\n" * 2)
 
 
-def part2(paper):
-    coordinates, instructions = parse_input(paper)
-
-    max_x = max(a[0] for a in coordinates)
-    min_x = min(a[0] for a in coordinates)
-    max_y = max(a[1] for a in coordinates)
-    min_y = min(a[1] for a in coordinates)
-    width = max_x + 1
-    hight = max_y + 1
-
-    matrix = np.zeros((hight, width), dtype=int)
-    for x, y in coordinates:
-        matrix[y][x] = 1
-    print_np_array(matrix)
-
-    matrix = matrix[min_y:]
-    for axis, line in instructions:
-        hight, width = matrix.shape
-        if axis == "y":
-            if hight % 2 != 0:
-                matrix = np.delete(matrix, line, 0)
-            old, new = np.split(matrix, 2, 0)
-            new_flipped = np.flip(new, 0)
-        else:
-            matrix = np.delete(matrix, line, 1)
-            old, new = np.split(matrix, 2, 1)
-            new_flipped = np.flip(new, 1)
-
-        matrix = np.bitwise_or(old, new_flipped)
-        print_np_array(matrix)
-
-    print_np_array(matrix)
-    return 16
-
-
 def main():
     sample_lines = read_input("sample_input.txt")
     lines = read_input("input.txt")
 
-    assert part1(sample_lines) == 17
+    # part1
+    assert folding(sample_lines, True) == 17
 
-    part1ans = part1(lines)
+    part1ans = folding(lines, True)
     print("part1:", part1ans)
 
-    assert part2(sample_lines) == 16
+    # part2
+    assert folding(sample_lines, False) == 16
 
-    part2ans = part2(lines)
-    print("part2:", part2ans)
+    part2ans = folding(lines, False)
+    print("part2: Look at text ^")
 
 
 if __name__ == "__main__":
