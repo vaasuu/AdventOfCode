@@ -13,7 +13,6 @@ def parse_input(paper):
         tuple(coordinate.split(",")) for coordinate in coordinates_str.splitlines()
     ]
     coordinates = [(int(x), int(y)) for x, y in coordinates_str]
-    print(coordinates)
 
     instructions = []
     for instruction in instructions_str.splitlines():
@@ -27,6 +26,29 @@ def parse_input(paper):
 
 def part1(paper):
     coordinates, instructions = parse_input(paper)
+    width = max(x for x, y in coordinates) + 1
+    hight = max(y for x, y in coordinates) + 1
+    print(coordinates)
+    matrix = np.zeros((hight, width), dtype=int)
+    for x, y in coordinates:
+        matrix[y][x] = 1
+    print(matrix, end="\n\n")
+
+    for axis, line in instructions:
+        if axis == "y":
+            matrix = np.delete(matrix, line, 0)
+            old, new = np.split(matrix, 2, 0)
+            new_flipped = np.flip(new, 0)
+        else:
+            matrix = np.delete(matrix, line, 1)
+            old, new = np.split(matrix, 2, 1)
+            new_flipped = np.flip(new, 1)
+
+        matrix = np.bitwise_or(old, new_flipped)
+        print(matrix, end="\n\n")
+
+        ans = np.sum(matrix)
+        return ans
 
 
 def main():
