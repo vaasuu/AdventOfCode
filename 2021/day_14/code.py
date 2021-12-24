@@ -45,6 +45,24 @@ def part1(lines):
     return ans
 
 
+def part2(lines):
+    polymer_template = lines[0]
+    pair_insertion_rules = lines[2:]
+
+    rules = {}
+    for rule in pair_insertion_rules:
+        between_letters, letter_to_insert = rule.split(" -> ")
+        rules[between_letters] = letter_to_insert
+
+    polymer = step(polymer_template, rules, 40)
+    counts = Counter(polymer)
+    sorted_letter_frequency = sorted(counts.values())
+    most_common = sorted_letter_frequency[-1]
+    least_common = sorted_letter_frequency[0]
+    ans = most_common - least_common
+    return ans
+
+
 def main():
     sample_lines = read_input("sample_input.txt")
     lines = read_input("input.txt")
@@ -54,10 +72,10 @@ def main():
     part1ans = part1(lines)
     print("part1:", part1ans)
 
-    # assert part2(sample_lines) ==
+    assert part2(sample_lines) == 2188189693529
 
-    # part2ans = part2(lines)
-    # print("part2:", part2ans)
+    part2ans = part2(lines)
+    print("part2:", part2ans)
 
 
 if __name__ == "__main__":
